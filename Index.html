@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Estoque</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <span>📦</span>
+            <h2>Estoque</h2>
+        </div>
+
+        <nav>
+            <button class="menu-item active" data-section="dashboard">
+                📊 Dashboard
+            </button>
+
+            <button class="menu-item" data-section="produtos">
+                📦 Produtos
+            </button>
+
+            <button class="menu-item" data-section="movimentacoes">
+                🔄 Movimentações
+            </button>
+        </nav>
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div>
+                <h1 id="pageTitle">Dashboard</h1>
+                <p>Controle seu estoque de forma simples.</p>
+            </div>
+
+            <button class="btn-primary" id="btnNovoProduto">
+                + Novo Produto
+            </button>
+        </header>
+
+        <section id="dashboard" class="section active">
+
+            <div class="cards">
+
+                <div class="card">
+                    <div class="card-icon blue">📦</div>
+                    <div>
+                        <span>Total de Produtos</span>
+                        <strong id="totalProdutos">0</strong>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon green">📊</div>
+                    <div>
+                        <span>Itens em Estoque</span>
+                        <strong id="totalEstoque">0</strong>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon orange">⚠️</div>
+                    <div>
+                        <span>Estoque Baixo</span>
+                        <strong id="estoqueBaixo">0</strong>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon purple">💰</div>
+                    <div>
+                        <span>Valor do Estoque</span>
+                        <strong id="valorEstoque">R$ 0,00</strong>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="dashboard-grid">
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Produtos com estoque baixo</h3>
+                    </div>
+
+                    <div id="listaEstoqueBaixo" class="empty">
+                        Nenhum produto com estoque baixo.
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Últimas movimentações</h3>
+                    </div>
+
+                    <div id="ultimasMovimentacoes" class="empty">
+                        Nenhuma movimentação registrada.
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section id="produtos" class="section">
+
+            <div class="toolbar">
+
+                <div class="search">
+                    🔍
+                    <input
+                        type="text"
+                        id="buscarProduto"
+                        placeholder="Buscar produto..."
+                    >
+                </div>
+
+                <select id="filtroCategoria">
+                    <option value="">Todas as categorias</option>
+                </select>
+
+                <select id="filtroEstoque">
+                    <option value="">Todos</option>
+                    <option value="baixo">Estoque baixo</option>
+                    <option value="zerado">Sem estoque</option>
+                    <option value="normal">Estoque normal</option>
+                </select>
+
+            </div>
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <h3>Lista de Produtos</h3>
+                    <span id="contadorProdutos">0 produtos</span>
+                </div>
+
+                <div class="table-container">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Categoria</th>
+                                <th>Preço</th>
+                                <th>Estoque</th>
+                                <th>Mínimo</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tabelaProdutos"></tbody>
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section id="movimentacoes" class="section">
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <h3>Histórico de Movimentações</h3>
+
+                    <select id="filtroMovimentacao">
+                        <option value="">Todas</option>
+                        <option value="entrada">Entradas</option>
+                        <option value="saida">Saídas</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Produto</th>
+                                <th>Tipo</th>
+                                <th>Quantidade</th>
+                                <th>Estoque Atual</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tabelaMovimentacoes"></tbody>
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <div class="modal-overlay" id="modalProduto">
+
+        <div class="modal">
+
+            <div class="modal-header">
+                <h2 id="tituloModal">Novo Produto</h2>
+                <button class="btn-close" id="fecharModal">×</button>
+            </div>
+
+            <form id="formProduto">
+
+                <input type="hidden" id="produtoId">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Nome do produto *</label>
+                        <input type="text" id="nome" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Categoria *</label>
+                        <input type="text" id="categoria" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Preço de compra</label>
+                        <input type="number" id="precoCompra" min="0" step="0.01">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Preço de venda *</label>
+                        <input type="number" id="precoVenda" min="0" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantidade em estoque *</label>
+                        <input type="number" id="quantidade" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estoque mínimo *</label>
+                        <input type="number" id="estoqueMinimo" min="0" value="5" required>
+                    </div>
+
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancelarModal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn-primary">
+                        Salvar Produto
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="modal-overlay" id="modalMovimentacao">
+
+        <div class="modal small">
+
+            <div class="modal-header">
+                <h2>Movimentar Estoque</h2>
+                <button class="btn-close" id="fecharMovimentacao">×</button>
+            </div>
+
+            <form id="formMovimentacao">
+
+                <input type="hidden" id="movProdutoId">
+
+                <div class="produto-mov">
+                    <strong id="movNomeProduto"></strong>
+                    <span id="movEstoqueAtual"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de movimentação</label>
+
+                    <select id="tipoMovimentacao" required>
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Quantidade</label>
+                    <input type="number" id="quantidadeMovimentacao" min="1" required>
+                </div>
+
+                <div class="modal-actions">
+
+                    <button type="button" class="btn-secondary" id="cancelarMovimentacao">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn-primary">
+                        Confirmar
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
